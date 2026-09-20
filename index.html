@@ -85,9 +85,10 @@ _mcss.textContent="#mov{display:none;position:fixed;inset:0;z-index:99;backgroun
 document.head.appendChild(_mcss);
 try{
 const _t=document.querySelector('.top');
-if(_t)_t.insertAdjacentHTML('beforeend','<span style="flex:1"></span><button id="fsBtn" class="tbtn">A</button><button id="darkBtn" class="tbtn">\uD83C\uDF19</button>');
+if(_t)_t.insertAdjacentHTML('beforeend','<span style="flex:1"></span><button id="giftBtn" class="tbtn">🎁 伴手禮清單</button><button id="fsBtn" class="tbtn">A</button><button id="darkBtn" class="tbtn">\uD83C\uDF19</button>');
 const _d=document.createElement('style');
-_d.textContent='body.dark{background:#121417;color:#e8e8e8}body.dark .top,body.dark .hero,body.dark .day{background:#1d2126}body.dark .tl{background:transparent}body.dark .desc{background:#242a31;color:#ddd}body.dark .desc b{color:#e8a04c}body.dark .desc .k{color:#e8a04c}body.dark .info{color:#aaa}body.dark .leg{background:#1c2740;border-color:#3b5078;color:#bcd0f0}body.dark .leg-info{color:#bcd0f0}body.dark .tabs{background:#121417}body.dark .tabs button{background:#242a31;color:#ccc;border-color:#444}body.dark .tabs button.on{background:#e8e8e8;color:#111;border-color:#e8e8e8}body.dark .mapnote{background:#1d2126;color:#aaa}body.dark .checks{background:#16233a;color:#bcd0f0;border-color:#27405e}body.dark .autock{background:#3a1d1d;color:#f0b0b0;border-color:#5e2727}body.dark .hotel{background:#241d3a;color:#d6c8ff;border-color:#4a3a7a}body.dark .customs{background:#2a2417;color:#e8d5a0;border-color:#6b5a2a}body.dark .move{background:#3a2c14;color:#e8b45a}body.dark .nm{color:#fff}body.dark .it{border-color:#3a4552}body.dark .lopt{background:#242a31;color:#ccc;border-color:#555}body.dark .lopt.on{background:#e8e8e8;color:#111;border-color:#e8e8e8}body.dark .tbtn{background:#242a31;color:#e8e8e8;border-color:#555}body.dark .mapbox{border-color:#3a4552}.tbtn{background:#fff;border:1px solid #ddd;border-radius:8px;padding:4px 9px;margin-left:6px;font-size:13px}';
+_d.textContent='#giftWrap{display:none;position:fixed;inset:0;z-index:120;background:rgba(0,0,0,.45);align-items:center;justify-content:center;padding:14px}#giftWrap.open{display:flex}.gift-box{background:#fff;border-radius:14px;max-width:680px;width:100%;max-height:86vh;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 8px 30px rgba(0,0,0,.3)}.gift-head{display:flex;align-items:center;gap:10px;padding:12px 16px;border-bottom:1px solid #eee;font-weight:800;font-size:16px}.gift-body{overflow-y:auto;padding:6px 16px 16px;flex:1}.gift-day{font-weight:800;color:#c9a227;margin:14px 0 4px;font-size:14px}.gift-site{font-weight:700;margin:10px 0 2px;font-size:14px}.gift-item{display:flex;gap:8px;font-size:13.5px;line-height:1.6;color:#333;padding:2px 0}.gift-item .gf{flex:none;color:#999}.gift-tip{font-size:12px;color:#888;background:#f7f4ec;border-radius:8px;padding:8px 10px;margin-top:8px;line-height:1.5}body.dark .gift-box{background:#1d2126;color:#e8e8e8}body.dark .gift-head{border-color:#333}body.dark .gift-item{color:#ddd}body.dark .gift-tip{background:#242a31;color:#aaa}.gift-x{margin-left:auto;border:1px solid #ddd;background:#fff;border-radius:8px;padding:3px 12px;font-size:13px;cursor:pointer}body.dark .gift-x{background:#242a31;color:#e8e8e8;border-color:#555}'+
+'body.dark{background:#121417;color:#e8e8e8}body.dark .top,body.dark .hero,body.dark .day{background:#1d2126}body.dark .tl{background:transparent}body.dark .desc{background:#242a31;color:#ddd}body.dark .desc b{color:#e8a04c}body.dark .desc .k{color:#e8a04c}body.dark .info{color:#aaa}body.dark .leg{background:#1c2740;border-color:#3b5078;color:#bcd0f0}body.dark .leg-info{color:#bcd0f0}body.dark .tabs{background:#121417}body.dark .tabs button{background:#242a31;color:#ccc;border-color:#444}body.dark .tabs button.on{background:#e8e8e8;color:#111;border-color:#e8e8e8}body.dark .mapnote{background:#1d2126;color:#aaa}body.dark .checks{background:#16233a;color:#bcd0f0;border-color:#27405e}body.dark .autock{background:#3a1d1d;color:#f0b0b0;border-color:#5e2727}body.dark .hotel{background:#241d3a;color:#d6c8ff;border-color:#4a3a7a}body.dark .customs{background:#2a2417;color:#e8d5a0;border-color:#6b5a2a}body.dark .move{background:#3a2c14;color:#e8b45a}body.dark .nm{color:#fff}body.dark .it{border-color:#3a4552}body.dark .lopt{background:#242a31;color:#ccc;border-color:#555}body.dark .lopt.on{background:#e8e8e8;color:#111;border-color:#e8e8e8}body.dark .tbtn{background:#242a31;color:#e8e8e8;border-color:#555}body.dark .mapbox{border-color:#3a4552}.tbtn{background:#fff;border:1px solid #ddd;border-radius:8px;padding:4px 9px;margin-left:6px;font-size:13px}';
 document.head.appendChild(_d);
 const _store={get(k){try{return localStorage.getItem(k)}catch(e){return null}},set(k,v){try{localStorage.setItem(k,v)}catch(e){}}};
 if(_store.get('tal-dark')==='1'){document.body.classList.add('dark');const _db=document.getElementById('darkBtn');if(_db)_db.textContent='\u2600\uFE0F';}
@@ -98,6 +99,47 @@ _applyFs();
 const _dbtn=document.getElementById('darkBtn'),_fbtn=document.getElementById('fsBtn');
 if(_dbtn)_dbtn.onclick=()=>{const on=document.body.classList.toggle('dark');_dbtn.textContent=on?'\u2600\uFE0F':'\uD83C\uDF19';_store.set('tal-dark',on?'1':'0');if(ovDay>=0&&ovMap)setTimeout(()=>ovMap.invalidateSize(),80);};
 if(_fbtn)_fbtn.onclick=()=>{_fsi=(_fsi+1)%3;_applyFs();_store.set('tal-fs',String(_fsi));};
+// 🎁 伴手禮清單：彙整所有站的伴手禮區塊
+const _giftBtn=document.getElementById('giftBtn');
+const _esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+if(_giftBtn){
+ const _giftHTML=`<div id="giftWrap"><div class="gift-box"><div class="gift-head">🎁 伴手禮總清單（含肉⛔不可帶回台灣）<button class="gift-x">✕</button></div><div class="gift-body"></div></div></div>`;
+ document.body.insertAdjacentHTML('beforeend',_giftHTML);
+ const _gw=document.getElementById('giftWrap'),_gb=document.querySelector('.gift-body');
+ const _gx=document.querySelector('.gift-x');
+ _giftBtn.onclick=()=>{_gb.innerHTML=_buildGiftHTML();_gw.classList.add('open');};
+ _gx.onclick=()=>_gw.classList.remove('open');
+ _gw.onclick=e=>{if(e.target===_gw)_gw.classList.remove('open');};
+}
+function _giftDivs(d){
+ const rx=/<div class='r'><div class='k'>🎁 伴手禮<\/div><div class='v'>(.*?)<\/div><\/div>/g;let m=[],t;
+ const _s=s=>s.replace(/<\/?span class='bl'>/g,'').replace(/^\s+|\s+$/g,'');
+ while((t=rx.exec(d)))m.push(_s(t[1]));
+ return m;
+}
+function _buildGiftHTML(){
+ let h='',total=0,meat=0;
+ DAYS.forEach((dd,di)=>{
+  const rows=[];
+  dd.items.forEach(o=>{
+   const gs=_giftDivs(o.d||'');
+   if(!gs.length)return;
+   const rowsIn=[].concat.apply([],gs.map(g=>g.split(/｜|｜|／|；/).map(x=>x.trim()).filter(Boolean)));
+   rows.push({site:o.n,list:rowsIn});
+  });
+  if(!rows.length)return;
+  h+=`<div class="gift-day">第${di+1}天 ${_esc(dd.title.split('・')[1]||'')}</div>`;
+  rows.forEach(r=>{
+   h+=`<div class="gift-site">📍 ${_esc(r.site.replace(/\s*🏨.*$/,''))}</div>`;
+   r.list.forEach(it=>{
+    if(!it||it==='步行南京路順買')return;
+    const bad=it.indexOf('⛔')>=0;if(bad)meat++;total++;
+    h+=`<div class="gift-item"><span class="gf">·</span><span>${_esc(it)}</span></div>`;
+   });
+  });
+ });
+ return `<div class="gift-tip">共 ${total} 項（含肉不可帶 ⛔ ${meat} 項）。⚠️ 出發前請再確認最新海關規定。</div>`+h;
+}
 }catch(e){}
 const RCACHE={};
 function fetchRoute(a,b,prof){
