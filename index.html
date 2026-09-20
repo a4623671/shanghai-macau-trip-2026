@@ -113,7 +113,7 @@ if(_giftBtn){
 }
 function _giftDivs(d){
  const rx=/<div class='r'><div class='k'>🎁 伴手禮<\/div><div class='v'>(.*?)<\/div><\/div>/g;let m=[],t;
- const _s=s=>s.replace(/<\/?span class='bl'>/g,'').replace(/^\s+|\s+$/g,'');
+ const _s=s=>s.replace(/<span[^>]*>/g,'').replace(/<\/span>/g,'').replace(/^\s+|\s+$/g,'');
  while((t=rx.exec(d)))m.push(_s(t[1]));
  return m;
 }
@@ -138,7 +138,27 @@ function _buildGiftHTML(){
    });
   });
  });
- return `<div class="gift-tip">共 ${total} 項（含肉不可帶 ⛔ ${meat} 項）。⚠️ 出發前請再確認最新海關規定。</div>`+h;
+ return `<div class="gift-tip">共 ${total} 項（含肉不可帶 ⛔ ${meat} 項）。⚠️ 出發前請再確認最新海關規定。</div>`
+ +`<div class="gift-day">🧂 加場推薦・醬料／零食（補強）</div>`
+ +`<div class="gift-site">📍 上海・蘇州・杭州</div>`
+ +[`鼎豐玫瑰腐乳・約10–20元／罐（醬料，可帶）`,
+   `海獅牌調味辣醬・約8–15元（醬料，可帶）`,
+   `邵萬生糟醉系列・約50–80元（含酒糟，可用真空包裝）`,
+   `采芝齋糖果蜜餞（蘇州）・約15–30元／包`,
+   `津津豆腐乾（蘇州）・約10–20元／袋`,
+   `棗泥麻餅（蘇州）・約20–35元／盒`,
+   `知味觀西湖藕粉（杭州）・約15–25元／罐`,
+   `天竺筷（杭州）・約10–30元／雙`,
+   `杭州小米酥／山核桃酥・約20–40元／盒`,]
+   .map(g=>`<div class="gift-item"><span class="gf">·</span><span>${_esc(g)}</span></div>`).join('')
+ +`<div class="gift-site">📍 澳門</div>`
+ +[`咀香園杏仁餅・約50–90葡幣／盒`,
+   `鉅記手信（杏仁餅／花生糖）・約40–80葡幣／盒`,
+   `車厘哥夫紐結糖・約30–60葡幣／袋`,
+   `蝦子麵（禮盒）・約60–120葡幣／盒`,
+   `老牌陳皮餅／老婆餅・約30–60葡幣／盒`,]
+   .map(g=>`<div class="gift-item"><span class="gf">·</span><span>${_esc(g)}</span></div>`).join('')
+ +h;
 }
 }catch(e){}
 const RCACHE={};
