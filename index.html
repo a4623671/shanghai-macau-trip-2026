@@ -102,6 +102,12 @@ function _clearNow(){window._nowT=null;document.querySelectorAll('.it.now').forE
 function _hitNow(di,i,kind,ts){showDay(di);window._nowT={di:di,i:i};const it=[...document.getElementById('d'+di).querySelectorAll('.it')][i];if(!it)return null;it.classList.add('now');const b=document.createElement('div');b.className='nowbadge';b.dataset.ts=ts;b.dataset.kind=kind;it.prepend(b);_tickBadge(b);if(it.scrollIntoView)it.scrollIntoView({block:'center',behavior:'smooth'});return {di:di,i:i};}
 function _tickBadge(b){const ms=(+b.dataset.ts)-Date.now(),k=b.dataset.kind;if(ms<0){b.textContent='✅ 時間到';return;}if(k==='cur')b.textContent='⏱ 還剩'+_fmtDur(ms)+'（行程中）';else if(k==='tmr')b.textContent='⏳ 明天 '+_fmtHM(+b.dataset.ts)+' 開始（還剩'+_fmtDur(ms)+'）';else b.textContent='⏳ '+_fmtDur(ms)+'後開始';}
 function _focusNowMarker(){const t=window._nowT;if(!t||!ovMap)return;const d=DAYS[t.di],o=d&&d.items[t.i],mk=(ovMap._ov||[])[t.i];if(!o||!mk||!mk.setIcon)return;mk.setIcon(L.divIcon({className:'',html:'<div style="background:#e05307;color:#fff;width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:19px;border:3px solid #fff;box-shadow:0 0 0 3px #e05307,0 4px 14px rgba(0,0,0,.4)">'+(t.i+1)+'</div>',iconSize:[40,40]}));mk.bindPopup('📍 <b>目前行程在這</b><br><b>'+(t.i+1)+'. '+o.n+'</b><br>'+o.t);ovMap.setView(o.c,16,{animate:true});mk.openPopup();}
+let _geoWatch=null,_geoMk=null,_geoAcc=null,_geoLast=null;
+function _geoDot(lat,lng,acc){if(!ovMap)return;_geoLast=[lat,lng];const h='<div style="background:#1a73e8;width:18px;height:18px;border-radius:50%;border:3px solid #fff;box-shadow:0 0 0 2px #1a73e8,0 2px 8px rgba(0,0,0,.4)"></div>';if(!_geoMk){_geoMk=L.marker([lat,lng],{icon:L.divIcon({className:'',html:h,iconSize:[18,18]}),interactive:false,keyboard:false,zIndexOffset:1000}).addTo(ovMap);ovMap._ov.push(_geoMk);}else{_geoMk.setLatLng([lat,lng]);}if(acc&&isFinite(acc)){if(!_geoAcc){_geoAcc=L.circle([lat,lng],{radius:acc,color:'#1a73e8',weight:1,opacity:.6,fillColor:'#1a73e8',fillOpacity:.15,interactive:false}).addTo(ovMap);ovMap._ov.push(_geoAcc);}else{_geoAcc.setLatLng([lat,lng]);_geoAcc.setRadius(acc);}}}
+function _startGeoWatch(){if(!ovMap||!navigator.geolocation||_geoWatch!==null)return;_geoMk=null;_geoAcc=null;_geoWatch=navigator.geolocation.watchPosition(p=>{_geoDot(p.coords.latitude,p.coords.longitude,p.coords.accuracy);},()=>{},{enableHighAccuracy:true,timeout:15000,maximumAge:30000});}
+function _stopGeoWatch(){if(_geoWatch!==null){try{navigator.geolocation.clearWatch(_geoWatch);}catch(e){}}_geoWatch=null;_geoMk=null;_geoAcc=null;}
+function _geoBtn(){if(!ovMap||!L.Control||ovMap._geobtn)return;const C=L.Control.extend({onAdd:function(){const d=L.DomUtil.create('div');d.innerHTML='<button id="geoBtn" title="回到我的位置" style="width:36px;height:36px;background:#fff;border:2px solid rgba(0,0,0,.2);border-radius:8px;font-size:19px;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center">📍</button>';L.DomEvent.disableClickPropagation(d);L.DomEvent.on(d,'click',_geoGo);return d;}});ovMap._geobtn=new C({position:'bottomright'}).addTo(ovMap);}
+function _geoGo(){if(_geoLast&&ovMap){ovMap.setView(_geoLast,Math.max(ovMap.getZoom(),16),{animate:true});return;}if(!navigator.geolocation){_nowToast('無法定位');return;}_nowToast('定位中…');navigator.geolocation.getCurrentPosition(p=>{_geoDot(p.coords.latitude,p.coords.longitude,p.coords.accuracy);if(ovMap)ovMap.setView([p.coords.latitude,p.coords.longitude],16,{animate:true});},()=>{_nowToast('定位失敗，請檢查定位權限');},{enableHighAccuracy:true,timeout:10000,maximumAge:60000});}
 function locateNow(){_clearNow();const now=Date.now();const tS=Date.parse(TRIP_DATES[0]+'T00:00:00+08:00'),tE=Date.parse(TRIP_DATES[8]+'T23:59:59+08:00');if(now<tS){_nowToast('行程 9/22 開始，還有 '+Math.ceil((tS-now)/86400000)+' 天');return null;}if(now>tE){_nowToast('行程已結束 🎉');return null;}let di=-1;for(let d=0;d<9;d++){const s=Date.parse(TRIP_DATES[d]+'T00:00:00+08:00');if(now>=s&&now<s+86400000){di=d;break;}}if(di<0){_nowToast('行程已結束 🎉');return null;}const its=[...document.getElementById('d'+di).querySelectorAll('.it')];const ws=its.map(it=>_nowTs(di,((it.querySelector('.tm')||{}).textContent||'')));for(let i=0;i<its.length;i++){const w=ws[i];if(w&&w.e!=null&&now>=w.s&&now<w.e)return _hitNow(di,i,'cur',w.e);}for(let i=0;i<its.length;i++){const w=ws[i];if(w&&w.s>now)return _hitNow(di,i,'next',w.s);}if(di<8){const nx=[...document.getElementById('d'+(di+1)).querySelectorAll('.it')];if(nx.length){const w=_nowTs(di+1,((nx[0].querySelector('.tm')||{}).textContent||''));if(w)return _hitNow(di+1,0,'tmr',w.s);}}_nowToast('今日行程已結束');return null;}
 setInterval(()=>{document.querySelectorAll('.nowbadge').forEach(_tickBadge);},30000);
 document.getElementById('nowBtn').onclick=()=>locateNow();
@@ -224,7 +230,7 @@ function openMap(di){
  showDay(di);
  document.getElementById("movTitle").textContent=DAYS[di].title;
  if(window._movReset)window._movReset();document.getElementById("mov").classList.add("open");
- if(!ovMap){ovMap=L.map("movMap");if(window.ResizeObserver){new ResizeObserver(()=>{if(ovDay>=0)ovMap.invalidateSize();}).observe(document.getElementById("movMap"));}L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'© OpenStreetMap'}).addTo(ovMap);}
+ if(!ovMap){ovMap=L.map("movMap");if(window.ResizeObserver){new ResizeObserver(()=>{if(ovDay>=0)ovMap.invalidateSize();}).observe(document.getElementById("movMap"));}L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'© OpenStreetMap'}).addTo(ovMap);_geoBtn();}
  (ovMap._ov||[]).forEach(l=>ovMap.removeLayer(l));ovMap._ov=[];
  const d=DAYS[di],bounds=[];
  d.items.forEach((o,i)=>{const mk=L.marker(o.c,{icon:L.divIcon({className:'',html:`<div style="background:#ff7a00;color:#fff;width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;border:2px solid #fff">${i+1}</div>`,iconSize:[26,26]})}).addTo(ovMap).bindPopup(`<b>${i+1}. ${o.n}</b><br>${o.t}`);ovMap._ov.push(mk);bounds.push(o.c);});
@@ -239,6 +245,7 @@ function openMap(di){
  }
  ovDay=di;
  setTimeout(()=>{ovMap.invalidateSize();if(bounds.length)ovMap.fitBounds(bounds,{padding:[30,30]});},80);if(window._nowT&&window._nowT.di===di)setTimeout(_focusNowMarker,350);
+ _startGeoWatch();
  upgradeRoutes(di);
 }
 async function upgradeSeg(di,li){
@@ -284,7 +291,7 @@ async function upgradeRoutes(di){
  ["pointerup","pointercancel"].forEach(ev=>document.addEventListener(ev,()=>{drag=false;}));
  window._movReset=function(){const b=box();if(b)b.removeAttribute("style");};
 })();
-function closeMap(){document.getElementById("mov").classList.remove("open");ovDay=-1;}
+function closeMap(){document.getElementById("mov").classList.remove("open");ovDay=-1;_stopGeoWatch();}
 document.getElementById("movX").onclick=closeMap;
 document.getElementById("mov").addEventListener("click",e=>{if(e.target.id==="mov")closeMap();});
 document.getElementById("mapBubble").onclick=()=>openMap(window._nowT?window._nowT.di:currentDay);
