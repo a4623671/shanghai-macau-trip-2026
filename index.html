@@ -88,19 +88,20 @@ _mcss.textContent="#mov{display:none;position:fixed;inset:0;z-index:99;backgroun
 document.head.appendChild(_mcss);
 try{
 const _t=document.querySelector('.top');
-if(_t)_t.insertAdjacentHTML('beforeend','<span style="flex:1"></span><button id="giftBtn" class="tbtn">🎁 伴手禮清單</button><button id="nowBtn" class="tbtn">⏱ 現在</button><button id="fsBtn" class="tbtn">A</button><button id="darkBtn" class="tbtn">\uD83C\uDF19</button>');
+if(_t)_t.insertAdjacentHTML('beforeend','<span style="flex:1"></span><button id="giftBtn" class="tbtn">🎁 伴手禮清單</button><button id="nowBtn" class="tbtn">⏱ 目前行程</button><button id="fsBtn" class="tbtn">A</button><button id="darkBtn" class="tbtn">\uD83C\uDF19</button>');
 /* ⏱ 現在：依時間定位今日行程＋剩餘時間（行程時間為 UTC+8） */
 const TRIP_DATES=["2026-09-22","2026-09-23","2026-09-24","2026-09-25","2026-09-26","2026-09-27","2026-09-28","2026-09-29","2026-09-30"];
 const _nc=document.createElement('style');
-_nc.textContent='.it.now{outline:3px solid #e05307;border-radius:10px}.curlink{display:inline-block;margin:6px 0 0 6px;background:#fff3ea;color:#c25700;border:1px solid #f0b27a;border-radius:8px;padding:5px 10px;font-size:12px;font-weight:700}.curlink:disabled{opacity:.5}.nowbadge{display:inline-block;margin:8px 0 2px;background:#e05307;color:#fff;font-weight:800;font-size:13px;border-radius:8px;padding:4px 12px}#nowtoast{position:fixed;left:50%;transform:translateX(-50%);bottom:88px;z-index:130;background:#17263e;color:#fff;font-size:14px;font-weight:700;border-radius:10px;padding:10px 18px;box-shadow:0 4px 16px rgba(0,0,0,.35);display:none;max-width:92vw;text-align:center}';
+_nc.textContent='.it.now{outline:3px solid #e05307;border-radius:10px}.curlink{display:inline-block;margin:6px 0 0 6px;background:#fff3ea;color:#c25700;border:1px solid #f0b27a;border-radius:8px;padding:5px 10px;font-size:12px;font-weight:700}.curlink:disabled{opacity:.5}#nowBtn{white-space:nowrap}.nowbadge{display:inline-block;margin:8px 0 2px;background:#e05307;color:#fff;font-weight:800;font-size:13px;border-radius:8px;padding:4px 12px}#nowtoast{position:fixed;left:50%;transform:translateX(-50%);bottom:88px;z-index:130;background:#17263e;color:#fff;font-size:14px;font-weight:700;border-radius:10px;padding:10px 18px;box-shadow:0 4px 16px rgba(0,0,0,.35);display:none;max-width:92vw;text-align:center}';
 document.head.appendChild(_nc);
 function _nowTs(di,tm){const mm=[...(tm||'').matchAll(/(\d{1,2}):(\d{2})/g)].map(x=>+x[1]*60+(+x[2]));if(!mm.length)return null;const b=Date.parse(TRIP_DATES[di]+'T00:00:00+08:00');return {s:b+mm[0]*60000,e:mm.length>1?b+mm[1]*60000:null};}
 function _fmtDur(ms){const m=Math.max(0,Math.floor(ms/60000));if(m>=60)return Math.floor(m/60)+'小時'+(m%60?m%60+'分':'');return m+'分';}
 function _fmtHM(ts){return new Date(ts+8*3600000).toISOString().slice(11,16);}
 function _nowToast(msg){let t=document.getElementById('nowtoast');if(!t){t=document.createElement('div');t.id='nowtoast';document.body.appendChild(t);}t.textContent=msg;t.style.display='block';clearTimeout(window._nowTT);window._nowTT=setTimeout(()=>{t.style.display='none';},4500);}
-function _clearNow(){document.querySelectorAll('.it.now').forEach(x=>x.classList.remove('now'));document.querySelectorAll('.nowbadge').forEach(x=>x.remove());}
-function _hitNow(di,i,kind,ts){showDay(di);const it=[...document.getElementById('d'+di).querySelectorAll('.it')][i];if(!it)return null;it.classList.add('now');const b=document.createElement('div');b.className='nowbadge';b.dataset.ts=ts;b.dataset.kind=kind;it.prepend(b);_tickBadge(b);if(it.scrollIntoView)it.scrollIntoView({block:'center',behavior:'smooth'});return {di:di,i:i};}
+function _clearNow(){window._nowT=null;document.querySelectorAll('.it.now').forEach(x=>x.classList.remove('now'));document.querySelectorAll('.nowbadge').forEach(x=>x.remove());}
+function _hitNow(di,i,kind,ts){showDay(di);window._nowT={di:di,i:i};const it=[...document.getElementById('d'+di).querySelectorAll('.it')][i];if(!it)return null;it.classList.add('now');const b=document.createElement('div');b.className='nowbadge';b.dataset.ts=ts;b.dataset.kind=kind;it.prepend(b);_tickBadge(b);if(it.scrollIntoView)it.scrollIntoView({block:'center',behavior:'smooth'});return {di:di,i:i};}
 function _tickBadge(b){const ms=(+b.dataset.ts)-Date.now(),k=b.dataset.kind;if(ms<0){b.textContent='✅ 時間到';return;}if(k==='cur')b.textContent='⏱ 還剩'+_fmtDur(ms)+'（行程中）';else if(k==='tmr')b.textContent='⏳ 明天 '+_fmtHM(+b.dataset.ts)+' 開始（還剩'+_fmtDur(ms)+'）';else b.textContent='⏳ '+_fmtDur(ms)+'後開始';}
+function _focusNowMarker(){const t=window._nowT;if(!t||!ovMap)return;const d=DAYS[t.di],o=d&&d.items[t.i],mk=(ovMap._ov||[])[t.i];if(!o||!mk||!mk.setIcon)return;mk.setIcon(L.divIcon({className:'',html:'<div style="background:#e05307;color:#fff;width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:19px;border:3px solid #fff;box-shadow:0 0 0 3px #e05307,0 4px 14px rgba(0,0,0,.4)">'+(t.i+1)+'</div>',iconSize:[40,40]}));mk.bindPopup('📍 <b>目前行程在這</b><br><b>'+(t.i+1)+'. '+o.n+'</b><br>'+o.t);ovMap.setView(o.c,16,{animate:true});mk.openPopup();}
 function locateNow(){_clearNow();const now=Date.now();const tS=Date.parse(TRIP_DATES[0]+'T00:00:00+08:00'),tE=Date.parse(TRIP_DATES[8]+'T23:59:59+08:00');if(now<tS){_nowToast('行程 9/22 開始，還有 '+Math.ceil((tS-now)/86400000)+' 天');return null;}if(now>tE){_nowToast('行程已結束 🎉');return null;}let di=-1;for(let d=0;d<9;d++){const s=Date.parse(TRIP_DATES[d]+'T00:00:00+08:00');if(now>=s&&now<s+86400000){di=d;break;}}if(di<0){_nowToast('行程已結束 🎉');return null;}const its=[...document.getElementById('d'+di).querySelectorAll('.it')];const ws=its.map(it=>_nowTs(di,((it.querySelector('.tm')||{}).textContent||'')));for(let i=0;i<its.length;i++){const w=ws[i];if(w&&w.e!=null&&now>=w.s&&now<w.e)return _hitNow(di,i,'cur',w.e);}for(let i=0;i<its.length;i++){const w=ws[i];if(w&&w.s>now)return _hitNow(di,i,'next',w.s);}if(di<8){const nx=[...document.getElementById('d'+(di+1)).querySelectorAll('.it')];if(nx.length){const w=_nowTs(di+1,((nx[0].querySelector('.tm')||{}).textContent||''));if(w)return _hitNow(di+1,0,'tmr',w.s);}}_nowToast('今日行程已結束');return null;}
 setInterval(()=>{document.querySelectorAll('.nowbadge').forEach(_tickBadge);},30000);
 document.getElementById('nowBtn').onclick=()=>locateNow();
@@ -237,7 +238,7 @@ function openMap(di){
   ovMap._ov.push(_pl);d.segObjs.push(_pl);
  }
  ovDay=di;
- setTimeout(()=>{ovMap.invalidateSize();if(bounds.length)ovMap.fitBounds(bounds,{padding:[30,30]});},80);
+ setTimeout(()=>{ovMap.invalidateSize();if(bounds.length)ovMap.fitBounds(bounds,{padding:[30,30]});},80);if(window._nowT&&window._nowT.di===di)setTimeout(_focusNowMarker,350);
  upgradeRoutes(di);
 }
 async function upgradeSeg(di,li){
@@ -286,7 +287,7 @@ async function upgradeRoutes(di){
 function closeMap(){document.getElementById("mov").classList.remove("open");ovDay=-1;}
 document.getElementById("movX").onclick=closeMap;
 document.getElementById("mov").addEventListener("click",e=>{if(e.target.id==="mov")closeMap();});
-document.getElementById("mapBubble").onclick=()=>openMap(currentDay);
+document.getElementById("mapBubble").onclick=()=>openMap(window._nowT?window._nowT.di:currentDay);
 document.getElementById("list").addEventListener("click",e=>{
  const mb=e.target.closest("[data-mapbtn]");
  if(mb){openMap(+mb.dataset.mapbtn);return;}
