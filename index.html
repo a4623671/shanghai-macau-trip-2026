@@ -11,7 +11,7 @@ const FOODIMG_DEMO=new Set(["冰箱貼", "商場伴手禮", "太古匯文創", "
 const tabs=document.getElementById('tabs'),list=document.getElementById('list'),maps={},bounds={};
 let currentDay=0;
 const MODEN={walk:"步行",metro:"地鐵",bus:"公車",taxi:"計程車",maglev:"磁浮",rail:"高鐵"};
-const MODEC={walk:{c:"#16a34a",d:"6 6"},metro:{c:"#7c3aed",d:null},bus:{c:"#2563eb",d:null},taxi:{c:"#6b7280",d:null},fixed:{c:"#ff5a00",d:"1 7"},rail:{c:"#b91c1c",d:null},boat:{c:"#0d9488",d:null},hotel:{c:"#9ca3b3",d:"1 7"}};
+const MODEC={walk:{c:"#16a34a",d:"6 6"},metro:{c:"#7c3aed",d:null},bus:{c:"#2563eb",d:null},taxi:{c:"#6b7280",d:null},fixed:{c:"#ff5a00",d:"1 7"},rail:{c:"#b91c1c",d:null},boat:{c:"#0d9488",d:null},hotel:{c:"#9ca3b3",d:"1 7"},maglev:{c:"#c026d3",d:null}};
 const MORDER=["walk","metro","bus","taxi","maglev","rail"];
 const MICON={walk:"🚶",metro:"🚇",bus:"🚌",taxi:"🚕",maglev:"🚝",rail:"🚄"};
 function legMode(leg){return (leg&&leg.opts)?leg.def:(leg.m||"fixed");}
@@ -82,7 +82,7 @@ DAYS.forEach((d,di)=>{
  div.innerHTML=h;list.appendChild(div);
 });
 DAYS.forEach((d,di)=>{try{recompute(di);}catch(e){}});
-document.body.insertAdjacentHTML("beforeend",`<div id="mov"><div class="mov-box"><div class="mov-head"><b id="movTitle" style="flex:1"></b><button id="movX">✕</button></div><div id="movMap"></div><div class="mov-note">🚶綠虛線／🚇紫（實線真線形，虛線示意直連）／🚌藍／🚕灰／🚄紅實線／🚢青實線／🏨灰點線／✈橘點線＝直線 · 回到行程點交通卡可切換即時更新</div></div></div><button id="mapBubble">🗺️</button>`);
+document.body.insertAdjacentHTML("beforeend",`<div id="mov"><div class="mov-box"><div class="mov-head"><b id="movTitle" style="flex:1"></b><button id="movX">✕</button></div><div id="movMap"></div><div class="mov-note"><span class="lg"><i style="border-top:4px dashed #16a34a"></i>步行</span><span class="lg"><i style="border-top:4px solid #7c3aed"></i>地鐵</span><span class="lg"><i style="border-top:4px solid #2563eb"></i>公車</span><span class="lg"><i style="border-top:4px solid #6b7280"></i>計程車</span><span class="lg"><i style="border-top:4px solid #c026d3"></i>磁浮</span><span class="lg"><i style="border-top:4px solid #b91c1c"></i>高鐵</span><span class="lg"><i style="border-top:4px solid #0d9488"></i>船</span><span class="lg"><i style="border-top:4px dotted #9ca3b3"></i>住宿</span><span class="lg"><i style="border-top:4px dotted #ff5a00"></i>飛機</span> · 回到行程點交通卡可切換即時更新</div></div></div><button id="mapBubble">🗺️</button>`);
 const _mcss=document.createElement("style");
 _mcss.textContent="#mov{display:none;position:fixed;inset:0;z-index:99;background:none;pointer-events:none;align-items:flex-end;justify-content:center;padding:0 12px 84px}#mov.open{display:flex}.mov-box{pointer-events:auto}.mov-head{touch-action:none;cursor:move}.mov-box{background:#fff;border-radius:14px;width:100%;max-width:580px;max-height:92vh;display:flex;flex-direction:column;overflow:hidden}.mov-head{padding:10px 14px;background:#17263e;color:#fff;display:flex;align-items:center;gap:8px}#movX{background:#fff;border:none;border-radius:8px;padding:4px 10px;font-weight:800}#movMap{height:33vh;min-height:220px;max-height:76vh;resize:vertical;overflow:hidden}.mov-note{font-size:11px;color:#666;padding:6px 10px}#mapBubble{position:fixed;right:14px;bottom:16px;z-index:90;width:54px;height:54px;border-radius:50%;border:none;font-size:24px;background:#17263e;box-shadow:0 2px 10px rgba(0,0,0,.35)}.mapbtn{display:block;width:calc(100% - 28px);margin:0 14px 10px;background:#17263e;color:#fff;border:none;border-radius:10px;padding:10px;font-size:14px;font-weight:700}.hotel{background:#f3efff;border:1px solid #c9b8f0;color:#3b2a6b;border-radius:10px;padding:8px 12px;margin:10px 14px 0;font-size:13px;line-height:1.6}.hotel.night{margin:0 14px 12px}.checks{background:#f0f7ff;border-bottom:1px solid #d8e6fa;font-size:12.5px;line-height:1.7;padding:9px 14px;color:#1e3a5f}.dl{font-size:11px;background:#e6f4ea;color:#137333;border-radius:6px;padding:1px 6px;white-space:nowrap}.dl.up{background:#fde8e8;color:#b3261e}.daydl{font-size:12px;opacity:.85;font-weight:400}.autock{background:#fdeceb;border-bottom:1px solid #f5c6c6;font-size:12.5px;line-height:1.7;padding:9px 14px;color:#7a1f1f}.autock:empty{display:none}";
 document.head.appendChild(_mcss);
@@ -92,7 +92,7 @@ if(_t)_t.insertAdjacentHTML('beforeend','<button id="giftBtn" class="tbtn">🎁 
 /* ⏱ 現在：依時間定位今日行程＋剩餘時間（行程時間為 UTC+8） */
 const TRIP_DATES=["2026-09-22","2026-09-23","2026-09-24","2026-09-25","2026-09-26","2026-09-27","2026-09-28","2026-09-29","2026-09-30"];
 const _nc=document.createElement('style');
-_nc.textContent='.it.now{outline:3px solid #e05307;border-radius:10px}.curlink{display:inline-block;margin:6px 0 0 6px;background:#fff3ea;color:#c25700;border:1px solid #f0b27a;border-radius:8px;padding:5px 10px;font-size:12px;font-weight:700}.curlink:disabled{opacity:.5}#nowBtn{white-space:nowrap}.pinbtn{position:absolute;top:8px;right:8px;background:#fff;border:1px solid #ddd;border-radius:8px;width:30px;height:30px;font-size:15px;line-height:1;cursor:pointer;z-index:2}.pinbtn.on{background:#1a73e8;border-color:#1a73e8}.it.pinned{outline:3px solid #1a73e8;border-radius:10px}.top{flex-wrap:wrap;gap:8px}.top>b{flex:1 1 220px;font-size:15px;line-height:1.4}.top .tbtn{white-space:nowrap;flex:0 0 auto;margin-left:0}@media (max-width:640px){.top>b{flex:1 1 100%}}.nowbadge{display:inline-block;margin:8px 0 2px;background:#e05307;color:#fff;font-weight:800;font-size:13px;border-radius:8px;padding:4px 12px}#nowtoast{position:fixed;left:50%;transform:translateX(-50%);bottom:88px;z-index:130;background:#17263e;color:#fff;font-size:14px;font-weight:700;border-radius:10px;padding:10px 18px;box-shadow:0 4px 16px rgba(0,0,0,.35);display:none;max-width:92vw;text-align:center}';
+_nc.textContent='.it.now{outline:3px solid #e05307;border-radius:10px}.curlink{display:inline-block;margin:6px 0 0 6px;background:#fff3ea;color:#c25700;border:1px solid #f0b27a;border-radius:8px;padding:5px 10px;font-size:12px;font-weight:700}.curlink:disabled{opacity:.5}#nowBtn{white-space:nowrap}.lg{display:inline-flex;align-items:center;gap:5px;margin:3px 10px 3px 0;font-size:12.5px}.lg i{width:26px;height:0}.pinbtn{position:absolute;top:8px;right:8px;background:#fff;border:1px solid #ddd;border-radius:8px;width:30px;height:30px;font-size:15px;line-height:1;cursor:pointer;z-index:2}.pinbtn.on{background:#1a73e8;border-color:#1a73e8}.it.pinned{outline:3px solid #1a73e8;border-radius:10px}.top{flex-wrap:wrap;gap:8px}.top>b{flex:1 1 220px;font-size:15px;line-height:1.4}.top .tbtn{white-space:nowrap;flex:0 0 auto;margin-left:0}@media (max-width:640px){.top>b{flex:1 1 100%}}.nowbadge{display:inline-block;margin:8px 0 2px;background:#e05307;color:#fff;font-weight:800;font-size:13px;border-radius:8px;padding:4px 12px}#nowtoast{position:fixed;left:50%;transform:translateX(-50%);bottom:88px;z-index:130;background:#17263e;color:#fff;font-size:14px;font-weight:700;border-radius:10px;padding:10px 18px;box-shadow:0 4px 16px rgba(0,0,0,.35);display:none;max-width:92vw;text-align:center}';
 document.head.appendChild(_nc);
 function _nowTs(di,tm){const mm=[...(tm||'').matchAll(/(\d{1,2}):(\d{2})/g)].map(x=>+x[1]*60+(+x[2]));if(!mm.length)return null;const b=Date.parse(TRIP_DATES[di]+'T00:00:00+08:00');return {s:b+mm[0]*60000,e:mm.length>1?b+mm[1]*60000:null};}
 function _fmtDur(ms){const m=Math.max(0,Math.floor(ms/60000));if(m<=0)return '不到1分';if(m>=60)return Math.floor(m/60)+'小時'+(m%60?m%60+'分':'');return m+'分';}
@@ -264,7 +264,7 @@ function openMap(di){
 }
 async function upgradeSeg(di,li){
  const d=DAYS[di];if(ovDay!==di)return;
- const _lg=(d.legs||[])[li];if(!_lg||_lg.f)return;const _md=legMode(_lg);if(_md==='metro'||_md==='rail')return;
+ const _lg=(d.legs||[])[li];if(!_lg||_lg.f)return;const _md=legMode(_lg);if(_md==='metro'||_md==='rail'||_md==='maglev')return;
  const prof=_md==='walk'?'foot':'driving';const key=di+'_'+li+'_'+prof;
  if(!RCACHE[key])RCACHE[key]=fetchRoute(d.items[li-1].c,d.items[li].c,prof);
  const coords=await RCACHE[key];if(ovDay!==di)return;
@@ -274,7 +274,7 @@ async function upgradeRoutes(di){
  const d=DAYS[di];
  for(let li=1;li<d.items.length;li++){
   if(ovDay!==di)return;
-  const _lg=(d.legs||[])[li];if(_lg&&_lg.f)continue;const _md=legMode(_lg);if(_md==='metro'||_md==='rail')continue;
+  const _lg=(d.legs||[])[li];if(_lg&&_lg.f)continue;const _md=legMode(_lg);if(_md==='metro'||_md==='rail'||_md==='maglev')continue;
   const prof=_md==="walk"?"foot":"driving";
   const key=di+"_"+li+"_"+prof;
   if(!RCACHE[key])RCACHE[key]=fetchRoute(d.items[li-1].c,d.items[li].c,prof);
