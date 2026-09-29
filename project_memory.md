@@ -89,7 +89,7 @@
 
 ## 8. 工具位置（本機，未進版控）
 
-`/Volumes/2TB/hermes/output/trip-verify/`：
+`/Volumes/2TB/Projects/web-trip/trip-verify/`（本機目錄，`.gitignore` 排除，未進版控）：
 `verify.py`（全站圖＋分頁）、`occurrences.py`（關鍵字綁定）、`test_gift_img.py`、
 `test_*.py`（各功能 Playwright 測試）、`patch_*.py`（歷次補丁腳本，可重跑）、
 `build_all4.py`（食物圖庫唯一來源）、`fetch_*.py`（圖搜）、`montage.py`（拼圖審查）。
