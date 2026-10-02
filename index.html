@@ -374,4 +374,8 @@ Object.assign(FOODIMG,{"小籠包":FOODIMG["南翔小籠外帶"],"生煎":FOODIM
   node.parentNode.replaceChild(frag,node);
  });
 })();
-</script></body></html>
+</script><script>
+/* 管理導航：僅 sessionStorage 有 admin_ok 才建出「管理」鈕（無旗標時 DOM 不存在） */
+try{if(sessionStorage.getItem('admin_ok')==='1'){var t=document.querySelector('.top');if(t){var a=document.createElement('a');a.href='https://a4623671.github.io/trips-hub/';a.textContent='‹‹ 管理';a.style.cssText='margin-left:auto;font-size:13px;font-weight:800;color:#17263e;background:#fff;border:1px solid #ddd;border-radius:10px;padding:7px 12px;text-decoration:none;white-space:nowrap';t.appendChild(a);}}}catch(e){}
+</script>
+</body></html>
